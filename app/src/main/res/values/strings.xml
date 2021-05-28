@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">Spectrum Analyzer</string>
+    <string name="title_activity_analyzer_settings">AnalyzerSettingsActivity</string>
+
+    <string-array name="sample_rate_input">
+        <item>1000</item>
+        <item>2500</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>17500</item>
+        <item>25000</item>
+
+    </string-array>
+
+    <string-array name="num_of_channels_input">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+
+    <string-array name="num_of_fft_points">
+        <item>32</item>
+        <item>64</item>
+        <item>128</item>
+        <item>256</item>
+        <item>512</item>
+        <item>1024</item>
+
+
+    </string-array>
+
+    <string-array name="amplitude_range">
+        <item>3.5</item>
+        <item>7</item>
+        <item>10.5</item>
+        <item>14</item>
+    </string-array>
+</resources>
