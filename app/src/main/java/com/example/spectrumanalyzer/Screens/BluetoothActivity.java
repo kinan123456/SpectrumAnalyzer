@@ -98,13 +98,13 @@ public class BluetoothActivity extends AppCompatActivity {
 
                     try {
                         readMessage = new String((byte[]) msg.obj, "UTF-8");
-
-                        serverDataBuffer = readMessage.split(",");
-                        entriesList = GraphController.ConvertInputArrayToGraphArray(serverDataBuffer);
-                        GraphController.GetInstance().CreateNewChannelData(entriesList);
-                        GraphController.GetInstance().DisplayAllChannelsData();
-                        Log.d("entriesList", "entriesList = " + entriesList);
-
+                        if (!readMessage.isEmpty()) {
+                            Log.d("readMessage", "readmessage = " + readMessage);
+                            serverDataBuffer = readMessage.split(" ");
+                            entriesList = GraphController.ConvertInputArrayToGraphArray(serverDataBuffer);
+                            GraphController.GetInstance().CreateNewChannelData(entriesList);
+                            GraphController.GetInstance().DisplayAllChannelsData();
+                        }
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
@@ -153,23 +153,19 @@ public class BluetoothActivity extends AppCompatActivity {
                     //Device found
                     Toast.makeText(getBaseContext(), "Device found", Toast.LENGTH_SHORT).show();
 
-                }
-                else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                } else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
                     //Device is now connected
                     Toast.makeText(getBaseContext(), "Device is now connected", Toast.LENGTH_SHORT).show();
 
-                }
-                else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                     //Done searching
                     Toast.makeText(getBaseContext(), "Done searching", Toast.LENGTH_SHORT).show();
 
-                }
-                else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) {
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) {
                     //Device is about to disconnect
                     Toast.makeText(getBaseContext(), "Device is about to disconnect", Toast.LENGTH_SHORT).show();
 
-                }
-                else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
                     //Device has disconnected
                     Toast.makeText(getBaseContext(), "Device has disconnected", Toast.LENGTH_SHORT).show();
 

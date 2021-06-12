@@ -30,7 +30,7 @@ public class SettingsController {
     public void SetDefaultSettings() {
         sampleRate = 1000000;
         channelsNumber = 1;
-        fftPointsNumber = 256;
+        fftPointsNumber = 128;
         maxFreqInterval = 500000;
         amplitudeRange = 3.3;
     }

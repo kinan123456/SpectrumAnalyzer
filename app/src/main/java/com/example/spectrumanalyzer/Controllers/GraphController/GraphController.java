@@ -41,9 +41,13 @@ public class GraphController {
 
         for (int i = 0; i < stringArray.length; i++) {
             int xValue = i * ((int) FilterDesignController.GetInstance().getFrequencyResolution());
-            double yValueDouble = (double) Integer.parseInt(stringArray[i].trim());
-            float yValueFloat = Float.valueOf(new DecimalFormat("#.##").format((float)((3.3*(yValueDouble)/1023.0))));
-            entriesList.add(new Entry(xValue, yValueFloat));
+            try{
+                double yValueDouble = (double) Integer.parseInt(stringArray[i].trim());
+                float yValueFloat = Float.valueOf(new DecimalFormat("#.##").format((float)((3.3*(yValueDouble)/1023.0))));
+                entriesList.add(new Entry(xValue, yValueFloat));
+            }catch (Exception e) {
+                Log.d("Exception", "Exception thrown at GraphController ConvertInputArrayToGraphArray");
+            }
         }
         return entriesList;
     }
