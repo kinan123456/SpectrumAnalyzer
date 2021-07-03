@@ -3,73 +3,81 @@ package com.example.spectrumanalyzer.Controllers.Bluetooth;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.Log;
 
-import com.example.spectrumanalyzer.Screens.BluetoothActivity;
+import com.example.spectrumanalyzer.Screens.Activities.BluetoothActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public class ConnectedThread extends Thread {
-    private final BluetoothSocket mmSocket;
-    private final InputStream mmInStream;
-    private final OutputStream mmOutStream;
+    private final BluetoothSocket mSocket;
+    private final InputStream mInStream;
+    private final OutputStream mOutStream;
     private final Handler mHandler;
 
     public ConnectedThread(BluetoothSocket socket, Handler handler) {
-        mmSocket = socket;
+        mSocket = socket;
         mHandler = handler;
-        InputStream tmpIn = null;
-        OutputStream tmpOut = null;
+        InputStream tmpInStream = null;
+        OutputStream tmpOutStream = null;
 
-        // Get the input and output streams, using temp objects because
-        // member streams are final
+        // Get the input and output streams, using temp objects because member streams are final
         try {
-            tmpIn = socket.getInputStream();
-            tmpOut = socket.getOutputStream();
-        } catch (IOException e) { }
+            tmpInStream = socket.getInputStream();
+            tmpOutStream = socket.getOutputStream();
+        } catch (IOException e) {
+        }
 
-        mmInStream = tmpIn;
-        mmOutStream = tmpOut;
+        mInStream = tmpInStream;
+        mOutStream = tmpOutStream;
     }
 
     @Override
     public void run() {
-        byte[] buffer;  // buffer store for the stream
-        int bytes; // bytes returned from read()
-        // Keep listening to the InputStream until an exception occurs
+        // buffer store for the stream
+        int max_capacity = 639;
+        int delta = max_capacity;
+        int offset = 0;
+        int bytes = 0;
+        byte[] buffer = new byte[max_capacity];
+
         while (true) {
-            try {
-                // Read from the InputStream
-                bytes = mmInStream.available();
-                if(bytes != 0) {
+            // Keep looping to listen for received messages
+            while (offset < max_capacity) {
+                try {
+                    if (mInStream.available() > 0) {
+                        //read bytes from input buffer
+                        if ((offset < max_capacity) && (delta > 0)) {
+                            bytes = mInStream.read(buffer, offset, delta);
 
-                    bytes = mmInStream.available(); // how many bytes are ready to be read?
-                    buffer = new byte[bytes];
-                    SystemClock.sleep(100); //pause and wait for rest of data. Adjust this depending on your sending speed.
-                    bytes = mmInStream.read(buffer, 0, bytes); // record how many bytes we actually read
-                    mHandler.obtainMessage(BluetoothActivity.MESSAGE_READ, bytes, -1, buffer)
-                            .sendToTarget(); // Send the obtained bytes to the UI activity
-                }
+                            if (bytes > -1) {
+                                offset += bytes;
+                                delta -= bytes;
 
+                            } else {
+                                break;
+                            }
+                        }
+                    }
                 } catch (IOException e) {
-                e.printStackTrace();
-
-                break;
+                    e.printStackTrace();
+                    break;
+                }
             }
+            // Send the obtained bytes to the UI Activity via handler
+            mHandler.obtainMessage(BluetoothActivity.MESSAGE_READ, max_capacity, -1, buffer).sendToTarget();
+            offset = 0;
+            delta = max_capacity;
         }
     }
 
     public void write(String input) {
-        byte[] bytes = input.getBytes();           //converts entered String into bytes
+        byte[] bytes = input.getBytes();  //converts input String into bytes
         try {
-            mmOutStream.write(bytes);
-        } catch (IOException e) { }
-    }
-
-    public void cancel() {
-        try {
-            mmSocket.close();
-        } catch (IOException e) { }
+            mOutStream.write(bytes);
+        } catch (IOException e) {
+        }
     }
 }

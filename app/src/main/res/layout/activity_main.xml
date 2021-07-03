@@ -1,5 +1,4 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -25,19 +24,12 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="left"
                     android:text="Y Label" />
-
-                <TextView
-                    android:id="@+id/main_df_value"
-                    android:layout_width="84dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="left"
-                    android:text="df = " />
             </LinearLayout>
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/activity_main_linechart"
                 android:layout_width="match_parent"
-                android:layout_height="375dp" />
+                android:layout_height="304dp" />
 
             <TextView
                 android:id="@+id/graph_x_label"
@@ -47,8 +39,8 @@
                 android:text="X Label" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="85dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -59,14 +51,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="   Sample Rate    [Hz]     : "
+                        android:text=" Sample Rate        :   1    [MHz]"
+                        android:textColor="#000000"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/main_settings_sample_rate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="   " />
                 </LinearLayout>
 
                 <LinearLayout
@@ -75,16 +63,12 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="   FFT Points        [ # ]     : "
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text=" FFT Points            : 128 [   #   ]"
+                        android:textColor="#000000"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/main_settings_fft_points"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="   " />
                 </LinearLayout>
 
                 <LinearLayout
@@ -93,41 +77,85 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="   Filter Status  [On/Off] : "
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text=" Window Function : Hamming"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text=" Socket Status       : "
+                        android:textColor="#000000"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/main_settings_design_filter"
+                        android:id="@+id/bluetooth_status"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="   " />
-                </LinearLayout>
+                        android:layout_height="match_parent"
+                        android:text="   "
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/main_settings_design_filter_applied"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="" />
+                </LinearLayout>
             </LinearLayout>
+
         </LinearLayout>
 
     </RelativeLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="65dp"
+        android:layout_height="110dp"
         android:layout_alignParentBottom="false"
         android:layout_gravity="bottom"
         android:orientation="horizontal">
 
         <Button
-            android:layout_height="wrap_content"
+            android:id="@+id/bluetoothButton"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_margin="10px"
+            android:layout_weight="0.5"
+            android:text="Bluetooth Panel" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="false"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_height="40dp"
             android:id="@+id/playPauseButton"
             android:layout_width="100dp"
             android:layout_margin="10px"
             android:layout_weight="0.5"
             android:text="Play" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_alignParentBottom="false"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/gainControl"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_margin="10px"
+            android:layout_weight="0.5"
+            android:text="Gain Control" />
+    </LinearLayout>
+
 </FrameLayout>

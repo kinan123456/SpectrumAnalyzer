@@ -3,9 +3,7 @@ package com.example.spectrumanalyzer.Screens.Activities;
 import android.content.Context;
 import android.widget.TextView;
 
-import com.example.spectrumanalyzer.Controllers.SettingsController.SettingsController;
 import com.example.spectrumanalyzer.R;
-import com.example.spectrumanalyzer.Screens.FilterDesignerActivity;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
@@ -39,7 +37,7 @@ public class CustomMarkerView extends MarkerView {
 
         if (mOffset == null) {
             // center the marker horizontally and vertically
-            mOffset = new MPPointF((SettingsController.GetInstance().getSampleRate() / (2*SettingsController.GetInstance().getFftPointsNumber())),
+            mOffset = new MPPointF(3906,
                     -getHeight() - 60);
         }
         return mOffset;
