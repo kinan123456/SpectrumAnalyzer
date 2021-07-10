@@ -25,7 +25,7 @@ public class CustomMarkerView extends MarkerView {
     // content (user-interface)
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
-        tvContent.setText("Amp. " + e.getY() + " [Volts]\nFreq. " + e.getX() + " [Hz]");
+        tvContent.setText(String.format("Voltage: %.2f[V]", (3.3*e.getY()/4096.0)) +"\n"+ String.format("Frequency: %.2f[KHz]",e.getX()));
 
         // this will perform necessary layout
         super.refreshContent(e, highlight);
@@ -37,7 +37,7 @@ public class CustomMarkerView extends MarkerView {
 
         if (mOffset == null) {
             // center the marker horizontally and vertically
-            mOffset = new MPPointF(3906,
+            mOffset = new MPPointF(60,
                     -getHeight() - 60);
         }
         return mOffset;

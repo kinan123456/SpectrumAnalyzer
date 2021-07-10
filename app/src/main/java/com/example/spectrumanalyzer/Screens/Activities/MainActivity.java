@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,12 +22,10 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     // Widgets
-    Button playPauseBtn;
     private LineChart lineChart;
-    Button bluetoothBtn;
-    TextView graphXLabel, graphYLabel;
     private BluetoothAdapter mBTAdapter;
-    private TextView mBluetoothStatus;
+    Button bluetoothBtn,trackInputLevelBtn,gainControlBtn,playPauseBtn;
+    TextView graphXLabel, graphYLabel,hivfLabel,mBluetoothStatus,saModeLabel;
     /**
      * Called when the activity is first created.
      */
@@ -40,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         initWidgets();
         initPlayPauseBtn();
         initBluetoothBtn();
+        initGainControlBtn();
+        initInputVoltageTrackBtn();
 //        Setup chart data graph
         SetupChartGraph();
     }
@@ -48,9 +49,12 @@ public class MainActivity extends AppCompatActivity {
         lineChart = findViewById(R.id.activity_main_linechart);
         playPauseBtn = findViewById(R.id.playPauseButton);
         bluetoothBtn = findViewById(R.id.bluetoothButton);
+        gainControlBtn = findViewById(R.id.gainControl);
+        trackInputLevelBtn = findViewById(R.id.voltageTrack);
+        saModeLabel = findViewById(R.id.sa_mode);
+        hivfLabel = findViewById(R.id.ctrl_mode);
         graphYLabel = findViewById(R.id.graph_y_label);
         graphXLabel = findViewById(R.id.graph_x_label);
-        graphXLabel.setText("Frequency [Hz]");
     }
 
     private void SetupChartGraph() {
@@ -68,30 +72,52 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initPlayPauseBtn() {
-        playPauseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (playPauseBtn.getText().equals("Play")) {
-                    if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
-                        playPauseBtn.setText("Pause");
-                        BluetoothController.GetInstance().Write("Play!");
-                    } else {
-                        BluetoothController.GetInstance().DisplayBluetoothDisconnectedText(getApplicationContext());
-                    }
-                } else {
-                    PauseConnection();
-                }
+        playPauseBtn.setOnClickListener(v -> {
+            if (playPauseBtn.getText().equals("Play")) {
+                ResumeConnection();
+            } else {
+                PauseConnection();
             }
         });
     }
-    private void initBluetoothBtn() {
-        bluetoothBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PauseConnection();
-                Intent serverIntent = new Intent(MainActivity.this,BluetoothActivity.class);
-                startActivity(serverIntent);
+    private void initGainControlBtn() {
+        gainControlBtn.setOnClickListener(v -> {
+            if (gainControlBtn.getText().equals("Enable Control")) {
+                if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
+                    gainControlBtn.setText("Disable Control");
+                    BluetoothController.GetInstance().Write("Enable!");
+                    String checkHIVF = checkInputVoltageLevel();
+                    updateHIVFLabel(checkHIVF);
+                } else {
+                    BluetoothController.GetInstance().DisplayBluetoothDisconnectedText(getApplicationContext());
+                }
+            } else {
+                gainControlBtn.setText("Enable Control");
+                BluetoothController.GetInstance().Write("Disable!");                }
+            });
+    }
+    private void initInputVoltageTrackBtn() {
+        trackInputLevelBtn.setOnClickListener(v -> {
+            String highInputVoltageFlag = checkInputVoltageLevel();
+            updateHIVFLabel(highInputVoltageFlag);
+        });
+    }
+    private static String checkInputVoltageLevel() {
+            String checkHighInputVoltageLevel = GraphController.getHIVF();
+            if (checkHighInputVoltageLevel == "True") {
+                return "True";
+            } else {
+                return "False";
             }
+    }
+    private static void updateHIVFLabel(String newLabel) {
+        GraphController.setHIVF(newLabel);
+    }
+    private void initBluetoothBtn() {
+        bluetoothBtn.setOnClickListener(v -> {
+            PauseConnection();
+            Intent serverIntent = new Intent(MainActivity.this,BluetoothActivity.class);
+            startActivity(serverIntent);
         });
     }
 
@@ -110,14 +136,24 @@ public class MainActivity extends AppCompatActivity {
             else
                 mBluetoothStatus.setText("Connected to " + deviceNameConnectedTo);
         }
-        graphYLabel.setText(" Amplitude [Volts]");
         GraphController.GetInstance().CreateNewChannelData(new ArrayList<Entry>());
         GraphController.GetInstance().DisplayAllChannelsData();
     }
     private void PauseConnection() {
         if (playPauseBtn.getText().equals("Pause")) {
             playPauseBtn.setText("Play");
+            saModeLabel.setText("|Mode: Pause|");
             BluetoothController.GetInstance().Write("Pause!");
         }
     }
-}
+    private void ResumeConnection() {
+            if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
+                playPauseBtn.setText("Pause");
+                saModeLabel.setText("|Mode: Play |");
+                BluetoothController.GetInstance().Write("Play!");
+            }
+            else {
+                    BluetoothController.GetInstance().DisplayBluetoothDisconnectedText(getApplicationContext());
+                }
+        }
+    }

@@ -32,6 +32,7 @@ public class BluetoothController {
      * @param mBTSocket A connected or connecting bluetooth socket.
      * @param mHandler  Allows to send or process message object associated with a thread's message queue.
      */
+
     public void initConnectedThread(BluetoothSocket mBTSocket, Handler mHandler) {
         mConnectedThread = new ConnectedThread(mBTSocket, mHandler);
         mConnectedThread.start();

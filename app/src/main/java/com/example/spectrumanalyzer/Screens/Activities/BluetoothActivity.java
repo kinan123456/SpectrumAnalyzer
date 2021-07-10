@@ -4,7 +4,10 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -48,6 +51,7 @@ public class BluetoothActivity extends AppCompatActivity {
     private ListView mDevicesListView;
     private TextView mBluetoothStatus;
 
+    private BroadcastReceiver mReceiver;
     private BluetoothAdapter mBTAdapter;
     private ArrayAdapter<String> mBTArrayAdapter;
     private Set<BluetoothDevice> mPairedDevices;
@@ -83,14 +87,14 @@ public class BluetoothActivity extends AppCompatActivity {
                 if (msg.what == MESSAGE_READ) {
                     String readMessage;
                     String[] serverDataBuffer;
-                    ArrayList<Entry> EntryList;
+                    ArrayList<Entry> EntryList1, EntryList2;
 
                     try {
                         readMessage = new String((byte[]) msg.obj, "UTF-8");
                         if (!readMessage.isEmpty()) {
                             serverDataBuffer = readMessage.split(" ");
-                            EntryList = GraphController.ConvertInputArrayToGraphArray(serverDataBuffer);
-                            GraphController.GetInstance().CreateNewChannelData(EntryList);
+                            EntryList1 = GraphController.ConvertInputArrayToGraphArray(serverDataBuffer);
+                            GraphController.GetInstance().CreateNewChannelData(EntryList1);
                             GraphController.GetInstance().DisplayAllChannelsData();
                         }
                     } catch (UnsupportedEncodingException e) {
@@ -108,12 +112,10 @@ public class BluetoothActivity extends AppCompatActivity {
             mTurnOnOffBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(mTurnOnOffBtn.getText().equals("Turn Bluetooth On")) {
+                    if (mTurnOnOffBtn.getText().equals("Turn Bluetooth On")) {
                         mTurnOnOffBtn.setText("Turn Bluetooth OFF");
                         bluetoothOn();
-                    }
-                    else
-                    {
+                    } else {
                         mTurnOnOffBtn.setText("Turn Bluetooth ON");
                         bluetoothOff();
                     }
@@ -127,6 +129,38 @@ public class BluetoothActivity extends AppCompatActivity {
                 }
             });
         }
+
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+
+                if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                    //Device found
+                    Toast.makeText(getBaseContext(), "Device found", Toast.LENGTH_SHORT).show();
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    mBTArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                } else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                    //Device is now connected
+                    Toast.makeText(getBaseContext(), "Device is now connected", Toast.LENGTH_SHORT).show();
+
+                } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                    //Done searching
+                    Toast.makeText(getBaseContext(), "Done searching", Toast.LENGTH_SHORT).show();
+
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) {
+                    //Device is about to disconnect
+                    Toast.makeText(getBaseContext(), "Device is about to disconnect", Toast.LENGTH_SHORT).show();
+
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                    //Device has disconnected
+                    Toast.makeText(getBaseContext(), "Device has disconnected", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver,filter);
     }
 
     private void bluetoothOn() {
@@ -270,4 +304,13 @@ public class BluetoothActivity extends AppCompatActivity {
 
         mBTSocket = tmp;
     }
-}
+};
+
+ //   public void InitBluetoothState() {
+   //     IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+       // IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+     //   IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        //this.registerReceiver(mReceiver, filter1);
+        //this.registerReceiver(mReceiver, filter2);
+        //this.registerReceiver(mReceiver, filter3);
+    //}

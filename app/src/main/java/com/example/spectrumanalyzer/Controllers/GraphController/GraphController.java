@@ -2,7 +2,9 @@ package com.example.spectrumanalyzer.Controllers.GraphController;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.widget.TextView;
 
+import com.example.spectrumanalyzer.R;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -17,43 +19,89 @@ public class GraphController {
     private static GraphController instance = null;
     private int dataSetsColor = -1;
     private LineChart graph;
-    private LineDataSet lineDataSet;
+    private LineDataSet lineDataSet1,lineDataSet2;
     private Context context;
     ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+    public static String highInputVoltageFlag = "False";
 
     private GraphController() {
+
     }
 
     public static GraphController GetInstance() {
-        if (instance == null)
+        if (instance == null) {
             instance = new GraphController();
+        }
         return instance;
     }
     public static ArrayList<Entry> ConvertInputArrayToGraphArray(String[] stringArray) {
         ArrayList<Entry> EntryList = new ArrayList<>();
-        int Amplitude,Frequency;
+        float Frequency;
+        float Amplitude;
+
         for (int i = 0; i < stringArray.length; i++) {
+            if(stringArray[i].length() != 4)
+                stringArray[i] = "0000";
             Frequency = ComputeFrequency(i);
-            Amplitude = Integer.parseInt(stringArray[i].trim());
+            Amplitude = ComputeAmplitude(stringArray[i]);
             EntryList.add(new Entry(Frequency, Amplitude));
         }
+        updateHIVF(EntryList);
         return EntryList;
     }
-    private static int ComputeFrequency(int arrayIndex) {
-        return 3906 * arrayIndex;
+    public static void setHIVF(String str) {
+        highInputVoltageFlag = str;
+    }
+    public static String getHIVF(){
+        return highInputVoltageFlag;
+    }
+    public static void updateHIVF(ArrayList<Entry> EntryList){
+        if(EntryList.get(0).getY() > 2048)
+            setHIVF("True");
+        else{
+            setHIVF("False");
+        }
+    }
+    public static ArrayList<Entry> ComputeChannelsMainFrequency(ArrayList<Entry> Spectrum) {
+        ArrayList<Entry> mainFreqs = new ArrayList<>();
+
+        float F, A, maxiOne = 0, maxiTwo = 0, maxOne = 0, maxTwo = 0;
+        for (int i = 1; i < Spectrum.size(); i++) {
+            A = Spectrum.get(i).getY();
+            F = Spectrum.get(i).getX();
+            if (maxOne < A) {
+                maxTwo = maxOne;
+                maxiTwo = maxiOne;
+                maxOne = A;
+                maxiOne = F;
+            } else if (maxTwo < A) {
+                maxTwo = A;
+                maxiTwo = F;
+            }
+        }
+        mainFreqs.add(new Entry(maxiOne, maxOne));
+        mainFreqs.add(new Entry(maxiTwo, maxTwo));
+        return mainFreqs;
+    }
+
+    private static int ComputeAmplitude(String Value) {
+        return Integer.parseInt(Value.trim());
+    }
+    private static float ComputeFrequency(int arrayIndex) {
+        return (float)3.9*arrayIndex;
     }
     public void CreateNewChannelData(ArrayList<Entry> EntryList) {
         if (EntryList.size() <= 0) {
             dataSets.add(new LineDataSet(EntryList, ""));
         } else {
-            lineDataSet = new LineDataSet(EntryList, "[#] of Channels : 2");
-            lineDataSet.setDrawCircles(false);
-            lineDataSet.setDrawValues(false);
-            lineDataSet.setLineWidth(5);
-            lineDataSet.setColor(dataSetsColor);
-            lineDataSet.setCircleColor(dataSetsColor);
-            lineDataSet.setHighLightColor(Color.rgb(0, 0, 255));
-            dataSets.add(lineDataSet);
+            lineDataSet1 = new LineDataSet(EntryList, "[#] of Channels : 2");
+            lineDataSet1.setDrawCircles(false);
+            lineDataSet1.setDrawValues(false);
+            lineDataSet1.setLineWidth(5);
+            lineDataSet1.setColor(dataSetsColor);
+            lineDataSet1.setCircleColor(dataSetsColor);
+            lineDataSet1.setHighLightColor(Color.rgb(0, 0, 255));
+            dataSets.add(lineDataSet1);
         }
     }
 
@@ -81,7 +129,7 @@ public class GraphController {
     private void configureXAxis() {
         XAxis xAxis = graph.getXAxis();
         xAxis.setAxisMinimum(0);
-        xAxis.setAxisMaximum(500000);
+        xAxis.setAxisMaximum(500);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawAxisLine(true);
     }

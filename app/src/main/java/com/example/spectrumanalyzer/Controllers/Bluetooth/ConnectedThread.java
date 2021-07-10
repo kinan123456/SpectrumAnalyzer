@@ -25,8 +25,8 @@ public class ConnectedThread extends Thread {
 
         // Get the input and output streams, using temp objects because member streams are final
         try {
-            tmpInStream = socket.getInputStream();
-            tmpOutStream = socket.getOutputStream();
+            tmpInStream = mSocket.getInputStream();
+            tmpOutStream = mSocket.getOutputStream();
         } catch (IOException e) {
         }
 
@@ -40,7 +40,7 @@ public class ConnectedThread extends Thread {
         int max_capacity = 639;
         int delta = max_capacity;
         int offset = 0;
-        int bytes = 0;
+        int bytes;
         byte[] buffer = new byte[max_capacity];
 
         while (true) {
