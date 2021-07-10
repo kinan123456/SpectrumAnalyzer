@@ -6,8 +6,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -24,8 +22,9 @@ public class MainActivity extends AppCompatActivity {
     // Widgets
     private LineChart lineChart;
     private BluetoothAdapter mBTAdapter;
-    Button bluetoothBtn,trackInputLevelBtn,gainControlBtn,playPauseBtn;
-    TextView graphXLabel, graphYLabel,hivfLabel,mBluetoothStatus,saModeLabel;
+    Button bluetoothBtn,trackInputLevelBtn,gainControlBtn,playPauseBtn,resetBtn;
+    static TextView graphXLabel, graphYLabel,hivfLabel,mBluetoothStatus,mSocketStatus,saModeLabel;
+    String checkHIVF;
     /**
      * Called when the activity is first created.
      */
@@ -37,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        Initialize Play/Pause and Reset buttons handlers
         initWidgets();
+        initResetBtn();
         initPlayPauseBtn();
         initBluetoothBtn();
         initGainControlBtn();
@@ -48,13 +48,16 @@ public class MainActivity extends AppCompatActivity {
     private void initWidgets() {
         lineChart = findViewById(R.id.activity_main_linechart);
         playPauseBtn = findViewById(R.id.playPauseButton);
+        resetBtn = findViewById(R.id.resetButton);
         bluetoothBtn = findViewById(R.id.bluetoothButton);
         gainControlBtn = findViewById(R.id.gainControl);
         trackInputLevelBtn = findViewById(R.id.voltageTrack);
         saModeLabel = findViewById(R.id.sa_mode);
-        hivfLabel = findViewById(R.id.ctrl_mode);
+        hivfLabel = findViewById(R.id.hivf_mode);
         graphYLabel = findViewById(R.id.graph_y_label);
         graphXLabel = findViewById(R.id.graph_x_label);
+        mSocketStatus = findViewById(R.id.socket_status);
+        mBluetoothStatus = findViewById(R.id.bluetooth_status);
     }
 
     private void SetupChartGraph() {
@@ -73,87 +76,114 @@ public class MainActivity extends AppCompatActivity {
 
     private void initPlayPauseBtn() {
         playPauseBtn.setOnClickListener(v -> {
-            if (playPauseBtn.getText().equals("Play")) {
-                ResumeConnection();
-            } else {
-                PauseConnection();
+            if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
+                if(playPauseBtn.getText() == "Play"){
+                playMode();
+                } else{
+                    if(playPauseBtn.getText() == "Pause"){
+                        pauseMode();
+                    }
+                }
+            }
+            else{
+                BluetoothController.GetInstance().toastSystemMessage(getApplicationContext());
+            }
+        });
+    }
+    private void initResetBtn() {
+        resetBtn.setOnClickListener(v -> {
+            if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
+                resetMode();
+            }
+            else{
+                BluetoothController.GetInstance().toastSystemMessage(getApplicationContext());
             }
         });
     }
     private void initGainControlBtn() {
         gainControlBtn.setOnClickListener(v -> {
-            if (gainControlBtn.getText().equals("Enable Control")) {
-                if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
-                    gainControlBtn.setText("Disable Control");
+            if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
+                if (gainControlBtn.getText().equals("Enable Control")) {
                     BluetoothController.GetInstance().Write("Enable!");
-                    String checkHIVF = checkInputVoltageLevel();
+                    gainControlBtn.setText("Disable Control");
+                    checkHIVF = checkInputVoltageLevel();
                     updateHIVFLabel(checkHIVF);
                 } else {
-                    BluetoothController.GetInstance().DisplayBluetoothDisconnectedText(getApplicationContext());
+                    gainControlBtn.setText("Enable Control");
+                    BluetoothController.GetInstance().Write("Disable!");
                 }
             } else {
-                gainControlBtn.setText("Enable Control");
-                BluetoothController.GetInstance().Write("Disable!");                }
+                BluetoothController.GetInstance().toastSystemMessage(getApplicationContext());
+        }
             });
+
     }
     private void initInputVoltageTrackBtn() {
-        trackInputLevelBtn.setOnClickListener(v -> {
-            String highInputVoltageFlag = checkInputVoltageLevel();
-            updateHIVFLabel(highInputVoltageFlag);
-        });
+            trackInputLevelBtn.setOnClickListener(v -> {
+                if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
+                    checkHIVF = checkInputVoltageLevel();
+                    updateHIVFLabel(checkHIVF);
+                } else {
+                    BluetoothController.GetInstance().toastSystemMessage(getApplicationContext());
+                }
+            });
     }
     private static String checkInputVoltageLevel() {
             String checkHighInputVoltageLevel = GraphController.getHIVF();
             if (checkHighInputVoltageLevel == "True") {
-                return "True";
+                return "On";
             } else {
-                return "False";
+                return "Off";
             }
     }
     private static void updateHIVFLabel(String newLabel) {
-        GraphController.setHIVF(newLabel);
+        if(newLabel == "Off") {
+            hivfLabel.setText("|HIVF: " + newLabel + "  |");
+        }else{
+            hivfLabel.setText("|HIVF:  " + newLabel + "  |");
+        }
     }
     private void initBluetoothBtn() {
         bluetoothBtn.setOnClickListener(v -> {
-            PauseConnection();
-            Intent serverIntent = new Intent(MainActivity.this,BluetoothActivity.class);
-            startActivity(serverIntent);
+            Intent bluetoothIntent = new Intent(MainActivity.this,BluetoothActivity.class);
+            startActivity(bluetoothIntent);
         });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mBTAdapter =  BluetoothAdapter.getDefaultAdapter(); // get a handle on the bluetooth radio
-        mBluetoothStatus = findViewById(R.id.bluetooth_status);
         GraphController.GetInstance().ConfigureLineChart();
-        if (!mBTAdapter.isEnabled()) {
-            mBluetoothStatus.setText("Bluetooth is Off");
-        } else {
-            String deviceNameConnectedTo = BluetoothController.GetInstance().GetDeviceNameConnectedTo();
-            if (deviceNameConnectedTo.isEmpty())
-                mBluetoothStatus.setText("Disconnected");
-            else
-                mBluetoothStatus.setText("Connected to " + deviceNameConnectedTo);
-        }
-        GraphController.GetInstance().CreateNewChannelData(new ArrayList<Entry>());
-        GraphController.GetInstance().DisplayAllChannelsData();
+        //BluetoothActivity.displayBluetoothSocketStatus();
+        resetMode();
     }
-    private void PauseConnection() {
-        if (playPauseBtn.getText().equals("Pause")) {
-            playPauseBtn.setText("Play");
-            saModeLabel.setText("|Mode: Pause|");
+
+    private void pauseMode() {
+        if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
             BluetoothController.GetInstance().Write("Pause!");
+            saModeLabel.setText("|Mode: Pause|");
+            playPauseBtn.setText("Play");
+        }
+        else{
+            saModeLabel.setText("|Mode: Idle |");
         }
     }
-    private void ResumeConnection() {
+    private void playMode() {
             if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
-                playPauseBtn.setText("Pause");
                 saModeLabel.setText("|Mode: Play |");
                 BluetoothController.GetInstance().Write("Play!");
-            }
-            else {
-                    BluetoothController.GetInstance().DisplayBluetoothDisconnectedText(getApplicationContext());
+                } else {
+                saModeLabel.setText("|Mode: Idle |");
+                BluetoothController.GetInstance().toastSystemMessage(getApplicationContext());
                 }
         }
+
+    private void resetMode() {
+        if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
+            BluetoothController.GetInstance().Write("Reset!");
+        }
+        GraphController.GetInstance().CreateNewChannelData(new ArrayList<>());
+        GraphController.GetInstance().DisplayAllChannelsData();        saModeLabel.setText("|Mode: Idle |");
+        hivfLabel.setText("|HIVF: Idle |");
     }
+}

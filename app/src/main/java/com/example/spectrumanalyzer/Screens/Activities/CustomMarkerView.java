@@ -37,8 +37,8 @@ public class CustomMarkerView extends MarkerView {
 
         if (mOffset == null) {
             // center the marker horizontally and vertically
-            mOffset = new MPPointF(60,
-                    -getHeight() - 60);
+            mOffset = new MPPointF(30,
+                    -getHeight() - 30);
         }
         return mOffset;
     }

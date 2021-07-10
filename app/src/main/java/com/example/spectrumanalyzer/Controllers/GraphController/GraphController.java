@@ -22,7 +22,7 @@ public class GraphController {
     private LineDataSet lineDataSet1,lineDataSet2;
     private Context context;
     ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-    public static String highInputVoltageFlag = "False";
+    public static String highInputVoltageFlag = "Off";
 
     private GraphController() {
 
@@ -57,9 +57,9 @@ public class GraphController {
     }
     public static void updateHIVF(ArrayList<Entry> EntryList){
         if(EntryList.get(0).getY() > 2048)
-            setHIVF("True");
+            setHIVF("On");
         else{
-            setHIVF("False");
+            setHIVF("Off");
         }
     }
     public static ArrayList<Entry> ComputeChannelsMainFrequency(ArrayList<Entry> Spectrum) {
@@ -123,7 +123,7 @@ public class GraphController {
         graph.getAxisRight().setEnabled(false);
         YAxis yAxis = graph.getAxisLeft();
         yAxis.setAxisMinimum(0);
-        yAxis.setAxisMaximum(4096);
+        yAxis.setAxisMaximum(6144);
     }
 
     private void configureXAxis() {

@@ -36,7 +36,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/ctrl_mode"
+                    android:id="@+id/hivf_mode"
                     android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -123,10 +123,10 @@
                         android:textColor="#000000" />
 
                     <TextView
-                        android:id="@+id/bluetooth_status"
+                        android:id="@+id/socket_status"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="   "
+                        android:text="Closed"
                         android:textColor="#000000"
                         android:textStyle="bold" />
 
@@ -160,6 +160,13 @@
 
         <Button
             android:layout_height="40dp"
+            android:id="@+id/resetButton"
+            android:layout_width="100dp"
+            android:layout_margin="10px"
+            android:layout_weight="0.5"
+            android:text="Reset" />
+        <Button
+            android:layout_height="40dp"
             android:id="@+id/playPauseButton"
             android:layout_width="100dp"
             android:layout_margin="10px"
@@ -175,20 +182,19 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/gainControl"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_margin="10px"
-            android:layout_weight="0.5"
-            android:text="Enable Control" />
-
-        <Button
             android:id="@+id/voltageTrack"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_margin="10px"
             android:layout_weight="0.5"
             android:text="Track Level" />
+        <Button
+            android:id="@+id/gainControl"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_margin="10px"
+            android:layout_weight="0.5"
+            android:text="Enable Control" />
     </LinearLayout>
 
 </FrameLayout>
