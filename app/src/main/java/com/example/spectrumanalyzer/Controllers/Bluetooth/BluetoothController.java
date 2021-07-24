@@ -10,12 +10,12 @@ public class BluetoothController {
     //    The name of the device our app is connected to.
     private String deviceNameConnectedTo = "";
     //    Bluetooth state can be unknown, connected or disconnected.
-    public enum btState {CONNECTED, UNKNOWN}
+    public enum btState {UNKNOWN,CONNECTING,CONNECTED,DISCONNECTED}
     private static BluetoothController instance = null;
     //    Initial bluetooth state to unknown.
-    private btState currentBtState = btState.UNKNOWN;
+    private btState currentBtState = btState.DISCONNECTED;
     //    Thread for bluetooth connection between client and server.
-    private ConnectedThread mConnectedThread;
+    private BluetoothSocketThread mSocketThread;
     private BluetoothController() {
     }
     /**
@@ -33,9 +33,9 @@ public class BluetoothController {
      * @param mHandler  Allows to send or process message object associated with a thread's message queue.
      */
 
-    public void initConnectedThread(BluetoothSocket mBTSocket, Handler mHandler) {
-        mConnectedThread = new ConnectedThread(mBTSocket, mHandler);
-        mConnectedThread.start();
+    public void initBluetoothSocketThread(BluetoothSocket mBTSocket, Handler mHandler) {
+        mSocketThread = new BluetoothSocketThread(mBTSocket, mHandler);
+        mSocketThread.start();
     }
 
     /**
@@ -60,15 +60,15 @@ public class BluetoothController {
      * @param msg Message to send to server
      */
     public void Write(String msg) {
-        if (mConnectedThread.isAlive()) {
-            mConnectedThread.write(msg);
+        if (mSocketThread.isAlive()) {
+            mSocketThread.write(msg);
         }
     }
     /**
      * Displays a toast message
      * @param context Activity context
      */
-    public void DisplayBluetoothDisconnectedText(Context context) {
+    public void toastSystemMessage(Context context) {
         Toast.makeText(context, "Bluetooth isn't connected yet!", Toast.LENGTH_SHORT).show();
     }
 }
