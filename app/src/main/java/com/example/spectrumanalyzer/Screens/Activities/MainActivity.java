@@ -8,6 +8,7 @@ import android.graphics.ColorSpace;
 import android.os.Bundle;
 
 import android.os.SystemClock;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -158,18 +159,18 @@ public class MainActivity extends AppCompatActivity {
                 if(saModeLabel.getText().equals(" Play")){
                     Toast.makeText(getBaseContext(),"System should be Paused First!",Toast.LENGTH_SHORT).show();
                 }else{
-                    if (gainControlBtn1.getText().equals("Ctrl Ch1 Gain")) {
-                        gainControlBtn1.setText("Disable Ch1 Ctrl");
+                    if (gainControlBtn1.getText().equals("Enable Gain Control1")) {
+                        gainControlBtn1.setText("Disable Gain Control1");
                         gainControlLabel1.setText("On");
                         GraphController.GetInstance().updateGainControlAdjustment("ch1EnableGainControl");
                         gainControlLabel1.setTextColor(Color.rgb(0,200,0));
-                        BluetoothController.GetInstance().Write("Enable1!");
+                        BluetoothController.GetInstance().Write("Enable Gain Control1!");
                     } else {
-                        gainControlBtn1.setText("Ctrl Ch1 Gain");
+                        gainControlBtn1.setText("Enable Gain Control1");
                         gainControlLabel1.setText("Off");
                         GraphController.GetInstance().updateGainControlAdjustment("ch1DisableGainControl");
                         gainControlLabel1.setTextColor(Color.rgb(200,0,0));
-                        BluetoothController.GetInstance().Write("Disable1!");
+                        BluetoothController.GetInstance().Write("Disable Gain Control1!");
                     }
                 }
             } else {
@@ -181,18 +182,18 @@ public class MainActivity extends AppCompatActivity {
                 if(saModeLabel.getText().equals(" Play")){
                     Toast.makeText(getBaseContext(),"System should be Paused First!",Toast.LENGTH_SHORT).show();
                 }else{
-                    if (gainControlBtn2.getText().equals("Ctrl Ch2 Gain")) {
-                        gainControlBtn2.setText("Disable Ch2 Ctrl");
+                    if (gainControlBtn2.getText().equals("Enable Gain Control2")) {
+                        gainControlBtn2.setText("Disable Gain Control2");
                         GraphController.GetInstance().updateGainControlAdjustment("ch2EnableGainControl");
                         gainControlLabel2.setText("On");
                         gainControlLabel2.setTextColor(Color.rgb(0,200,0));
-                        BluetoothController.GetInstance().Write("Enable2!");
+                        BluetoothController.GetInstance().Write("Enable Gain Control2!");
                     } else {
-                        gainControlBtn2.setText("Ctrl Ch2 Gain");
+                        gainControlBtn2.setText("Enable Gain Control2");
                         gainControlLabel2.setText("Off");
                         GraphController.GetInstance().updateGainControlAdjustment("ch2DisableGainControl");
                         gainControlLabel2.setTextColor(Color.rgb(200,0,0));
-                        BluetoothController.GetInstance().Write("Disable2!");
+                        BluetoothController.GetInstance().Write("Disable Gain Control2!");
                     }
                 }
             } else {
@@ -210,14 +211,14 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getBaseContext(), "System should be Paused First!", Toast.LENGTH_SHORT).show();
                 } else {
                     if (trackInputLevelBtn1.getText().equals("Trigger Tracker1")) {
-                        BluetoothController.GetInstance().Write("1trigger!");
                         trackInputLevelBtn1.setText("Track Ch1 Level");
+                        BluetoothController.GetInstance().Write("Trigger Tracker1!");
 
                     } else {
-                        BluetoothController.GetInstance().Write("1track!");
                         trackInputLevelBtn1.setText("Trigger Tracker1");
-                        SystemClock.sleep(250);
+                        BluetoothController.GetInstance().Write("Track Level1!");
                         hivf_ch1 = GraphController.GetInstance().getHIVFLabel(1);
+                        Log.i("myTag","After Tracking Click HIVF_FLAG1: " + hivf_ch1);
                         if (hivf_ch1 == "High") {
                             hivfLabel1.setText(" Exceeded");
                             hivfLabel1.setTextColor(Color.rgb(200, 0, 0));
@@ -238,14 +239,14 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getBaseContext(), "System should be Paused First!", Toast.LENGTH_SHORT).show();
                 }else{
                     if (trackInputLevelBtn2.getText().equals("Trigger Tracker2")) {
-                        BluetoothController.GetInstance().Write("2trigger!");
                         trackInputLevelBtn2.setText("Track Ch2 Level");
+                        BluetoothController.GetInstance().Write("Trigger Tracker2!");
 
                     } else {
-                        BluetoothController.GetInstance().Write("2track!");
                         trackInputLevelBtn2.setText("Trigger Tracker2");
-                        SystemClock.sleep(1000);
+                        BluetoothController.GetInstance().Write("Track Level2!");
                         hivf_ch2 = GraphController.GetInstance().getHIVFLabel(2);
+                        Log.i("myTag","After Tracking Click HIVF_FLAG2: " + hivf_ch2);
                         if (hivf_ch2 == "High") {
                             hivfLabel2.setText(" Exceeded");
                             hivfLabel2.setTextColor(Color.rgb(200, 0, 0));

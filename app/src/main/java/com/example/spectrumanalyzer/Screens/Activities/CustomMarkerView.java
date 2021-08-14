@@ -28,13 +28,12 @@ public class CustomMarkerView extends MarkerView {
     // content (user-interface)
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
-        tvContent.setText(
-                String.format("Voltage: %.2f[V]", ((3.3 * e.getY()) / 4096)) +
-                        "\n" +
-                        String.format("Frequency: %.2f[KHz]", e.getX())
-        );
-
-        // this will perform necessary layout
+        float Voltage = e.getY()*(float)(3.3 / 4096.0);
+        float Frequency = e.getX();
+        tvContent.setText(String.format("Voltage: %.2f[V]", Voltage)
+                          + "\n" +
+                          String.format("Frequency: %.2f[KHz]", Frequency));
         super.refreshContent(e, highlight);
+        // this will perform necessary layout
     }
 }

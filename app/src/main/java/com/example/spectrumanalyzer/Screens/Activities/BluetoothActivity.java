@@ -59,7 +59,7 @@ public class BluetoothActivity extends AppCompatActivity {
     private BluetoothAdapter mBTAdapter;
     private int ch = 1;
     String readMessage;
-    String[] serverDataBuffer;
+    String[] serverDataMsg;
     ArrayList<Entry> EntryList;
 
     @Override
@@ -303,18 +303,16 @@ public class BluetoothActivity extends AppCompatActivity {
                 if (msg.what == MESSAGE_READ) {
                     try {
                         readMessage = new String((byte[]) msg.obj, "UTF-8");
+                        Log.i("myTag",readMessage);
                         if (!readMessage.isEmpty()) {
-                            serverDataBuffer = readMessage.split(",");
-                            EntryList = GraphController.GetInstance().ConvertInputArrayToGraphArray(serverDataBuffer, ch);
-                            GraphController.GetInstance().CreateNewChannelData(EntryList, ch);
-                            if (ch == 2) {
-                                ch = 1;
-                                GraphController.GetInstance().DisplayAllChannelsData();
-                            } else {
-                                ch = 2;
+                                GraphController.GetInstance().updateVoltageLevelTracker(readMessage.trim());
+                                serverDataMsg = readMessage.split(",");
+                                EntryList = GraphController.GetInstance().ConvertInputArrayToGraphArray(serverDataMsg, ch);
+                                GraphController.GetInstance().CreateNewChannelData(EntryList, ch);
+                                ch = (ch == 1 ? 2 : 1);
+                                if(ch == 2){ GraphController.GetInstance().DisplayAllChannelsData();}
                             }
-                        }
-                    } catch (UnsupportedEncodingException e) {
+                        } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
                 }

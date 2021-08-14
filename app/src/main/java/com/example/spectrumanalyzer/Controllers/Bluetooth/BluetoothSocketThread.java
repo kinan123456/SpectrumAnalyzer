@@ -2,6 +2,7 @@ package com.example.spectrumanalyzer.Controllers.Bluetooth;
 
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -36,43 +37,29 @@ public class BluetoothSocketThread extends Thread {
     @Override
     public void run() {
         // buffer store for the stream
-        int max_capacity = 648,channel = 1;
-        int bytes;
-        byte[] buffer = new byte[max_capacity];
-
-        while (mSocket.isConnected() == true) {
-            int delta = max_capacity;
-            int offset = 0;
+        int data_buffer_max_capacity = 640,tracking_status_length = 10;
+        int bytes,delta,offset,bytes_available;
+        int buffer_length = data_buffer_max_capacity+tracking_status_length;
+        byte[] buffer = new byte[buffer_length];
+        while (mSocket.isConnected()) {
+            delta = data_buffer_max_capacity + tracking_status_length;
+            offset = 0;
             // Keep looping to listen for received messages
-            while (offset < max_capacity) {
-                try {
-                    if (mInStream.available() > 0) {
-                        //read bytes from input buffer
-                        if ((offset < max_capacity) && (delta > 0)) {
+            try {
+                SystemClock.sleep(150);
+                    while (offset < buffer_length && delta > 0) {
+                        bytes_available = mInStream.available();
+                        if (bytes_available > 0) {
                             bytes = mInStream.read(buffer, offset, delta);
-
-                            if (bytes > -1) {
-                                offset += bytes;
-                                delta -= bytes;
-
-                            } else {
-                                break;
-                            }
+                            offset += bytes;
+                            delta -= bytes;
+                            // Send the obtained bytes to the UI Activity via handler
                         }
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    break;
-                }
+                mHandler.obtainMessage(BluetoothActivity.MESSAGE_READ, data_buffer_max_capacity, -1, buffer).sendToTarget();
+            }catch (IOException ioException) {
+                    ioException.printStackTrace();
             }
-            // Send the obtained bytes to the UI Activity via handler
-            mHandler.obtainMessage(BluetoothActivity.MESSAGE_READ, max_capacity, -1, buffer).sendToTarget();
-            if(channel == 2){
-                channel = 1;
-            }else{
-                channel += 1;
-            }
-
         }
     }
     public void write(String input) {

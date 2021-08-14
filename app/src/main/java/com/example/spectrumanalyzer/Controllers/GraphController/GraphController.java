@@ -40,14 +40,14 @@ public class GraphController extends AppCompatActivity {
     ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
     private int ch1HighVoltageLevelFlag, ch2HighVoltageLevelFlag, ch1GainCntrlFlag, ch2GainCntrlFlag;
     public final int enableControl = 1, disableControl = 2;
-    public final int highVoltage = 1, lowVoltage = 2;
-    private String microController_msg;
+    public final int highVoltage = 1, lowVoltage = 0;
     private float Frequency, Amplitude;
     private int arrayLength;
 
     private GraphController() {
     }
-
+//static : singleton (single instna5ce in the whole app), GraphController.GetInstance.Method...
+    // we can use a class without members as static type,
     public static GraphController GetInstance() {
         if (instance == null) {
             instance = new GraphController();
@@ -59,17 +59,15 @@ public class GraphController extends AppCompatActivity {
         ArrayList<Entry> EntryList = new ArrayList<Entry>();
         int i = 0;
         for (String str : stringArray) {
-            try {
+            try{
                 Amplitude = ComputeAmplitude(str);
                 Frequency = ComputeFrequency(i);
-                EntryList.add(new Entry(Frequency, Amplitude));
-                i = i + 1;
-            } catch (NumberFormatException numberFormatException) {
-                microController_msg = str;
+            }catch(IllegalArgumentException IOExeption){
+                updateVoltageLevelTracker(str.trim());
             }
+            EntryList.add(new Entry(Frequency, Amplitude));
+            i = i + 1;
         }
-        Log.i("myTag",String.valueOf(i));
-        updateVoltageLevelTracker(microController_msg);
         return EntryList;
     }
 
@@ -82,16 +80,17 @@ public class GraphController extends AppCompatActivity {
     }
 
     public void updateVoltageLevelTracker(String msg) {
+        Log.i("myTag",msg);
         switch (msg) {
-            case "ch1High.":
+            case "ch1High":
                 ch1HighVoltageLevelFlag = highVoltage;
                 ch2HighVoltageLevelFlag = lowVoltage;
                 break;
-            case "ch2High.":
+            case "ch2High":
                 ch1HighVoltageLevelFlag = lowVoltage;
                 ch2HighVoltageLevelFlag = highVoltage;
                 break;
-            case "ch12Low.":
+            case "ch12Low":
                 ch1HighVoltageLevelFlag = lowVoltage;
                 ch2HighVoltageLevelFlag = lowVoltage;
                 break;
@@ -104,8 +103,7 @@ public class GraphController extends AppCompatActivity {
             }
             break;
         }
-        setHIVFLabel(1);
-        setHIVFLabel(2);
+        setHIVFLabel();
     }
 
     public void updateGainControlAdjustment(String msg) {
@@ -128,23 +126,14 @@ public class GraphController extends AppCompatActivity {
         }
     }
 
-    private void setHIVFLabel(int channel) {
-        if (channel == 1) {
-            if (ch1HighVoltageLevelFlag == highVoltage) {
-                hivfLabel1 = "High";
+    private void setHIVFLabel() {
+        hivfLabel1 = (ch1HighVoltageLevelFlag == highVoltage ? "High" : "Low");
+        hivfLabel2 = (ch2HighVoltageLevelFlag == highVoltage ? "High" : "Low");
+        Log.i("myTag","ch1HighVoltageLevelFlag :" + ch1HighVoltageLevelFlag);
+        Log.i("myTag","ch2HighVoltageLevelFlag :" + ch2HighVoltageLevelFlag);
 
-            } else {
-                hivfLabel1 = "Low";
-            }
-        } else {
-            if (ch2HighVoltageLevelFlag == highVoltage) {
-                hivfLabel2 = "High";
-
-            } else {
-                hivfLabel2 = "Low";
-
-            }
-        }
+        Log.i("myTag","Updated HIVF1 Label:" + hivfLabel1);
+        Log.i("myTag","Updated HIVF2 Label:" + hivfLabel2);
     }
 
     public String getHIVFLabel(int channel) {
@@ -208,5 +197,12 @@ public class GraphController extends AppCompatActivity {
 
     public void SetContext(Context mainActivityContext) {
         context = mainActivityContext;
+    }
+    public float getGainControlFlag(int channel){
+        if(channel == 1){
+            return (float) (ch1GainCntrlFlag == enableControl ? 1.0 : 2.0);
+        }else{
+            return (float) (ch2GainCntrlFlag == enableControl ? 1.0 : 2.0);
+        }
     }
 }
