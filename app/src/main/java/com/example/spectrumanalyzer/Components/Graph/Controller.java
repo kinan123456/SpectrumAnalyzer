@@ -1,67 +1,55 @@
-package com.example.spectrumanalyzer.Controllers.GraphController;
+package com.example.spectrumanalyzer.Components.Graph;
 
-import android.app.AppComponentFactory;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
-import android.widget.TextView;
 
-import com.example.spectrumanalyzer.R;
-import com.example.spectrumanalyzer.Screens.Activities.MainActivity;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.utils.MPPointF;
-
-import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.SortedMap;
 
-public class GraphController extends AppCompatActivity {
-    private static GraphController instance = null;
+public class Controller extends AppCompatActivity {
+    private static Controller instance = null;
     private int dataSetsColor = -1;
     private LineChart graph;
     private Context context;
     private String hivfLabel1 = "", hivfLabel2 = "";
     ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-    private int ch1HighVoltageLevelFlag, ch2HighVoltageLevelFlag, ch1GainCntrlFlag, ch2GainCntrlFlag;
-    public final int enableControl = 1, disableControl = 2;
+    private int ch1HighVoltageLevelFlag, ch2HighVoltageLevelFlag, ch1GainCtrlFlag = 1, ch2GainCtrlFlag = 1;
+    public final int enableControl = 2, disableControl = 1;
     public final int highVoltage = 1, lowVoltage = 0;
-    private float Frequency, Amplitude;
+    private float Frequency, Amplitude,voltAC,voltDC;
     private int arrayLength;
 
-    private GraphController() {
+    private Controller() {
     }
 //static : singleton (single instna5ce in the whole app), GraphController.GetInstance.Method...
     // we can use a class without members as static type,
-    public static GraphController GetInstance() {
+    public static Controller getInstance() {
         if (instance == null) {
-            instance = new GraphController();
+            instance = new Controller();
         }
         return instance;
     }
-
-    public ArrayList<Entry> ConvertInputArrayToGraphArray(String[] stringArray, int ch) {
+    public void resetDataGraph(){
+        dataSets.clear();
+        //dataSets = new ArrayList<ILineDataSet>();
+    }
+    public ArrayList<Entry> convertInputArrayToGraphArray(String[] stringArray, int ch) {
         ArrayList<Entry> EntryList = new ArrayList<Entry>();
         int i = 0;
         for (String str : stringArray) {
             try{
-                Amplitude = ComputeAmplitude(str);
-                Frequency = ComputeFrequency(i);
+                Amplitude = computeAmplitude(str);
+                Frequency = computeFrequency(i);
             }catch(IllegalArgumentException IOExeption){
                 updateVoltageLevelTracker(str.trim());
             }
@@ -71,16 +59,21 @@ public class GraphController extends AppCompatActivity {
         return EntryList;
     }
 
-    private float ComputeFrequency(int indx) {
+    private float computeFrequency(int indx) {
         return (float) (1.9525 * indx);
     }
 
-    private int ComputeAmplitude(String Value) {
-        return Integer.parseInt(Value.trim());
+    private int computeAmplitude(String Value) {
+        int intAmplitude = Integer.parseInt(Value.trim());
+        if(intAmplitude == 0){
+            intAmplitude+=1;
+        }
+        return intAmplitude;
     }
-
+    private float getGainControlFactor(int ch){
+        return ch == 1 ? ch1GainCtrlFlag : ch2GainCtrlFlag;
+    }
     public void updateVoltageLevelTracker(String msg) {
-        Log.i("myTag",msg);
         switch (msg) {
             case "ch1High":
                 ch1HighVoltageLevelFlag = highVoltage;
@@ -109,16 +102,16 @@ public class GraphController extends AppCompatActivity {
     public void updateGainControlAdjustment(String msg) {
         switch (msg) {
             case "ch1EnableGainControl":
-                ch1GainCntrlFlag = enableControl;
+                ch1GainCtrlFlag = enableControl;
                 break;
             case "ch2EnableGainControl":
-                ch2HighVoltageLevelFlag = enableControl;
+                ch2GainCtrlFlag = enableControl;
                 break;
             case "ch1DisableGainControl":
-                ch1HighVoltageLevelFlag = disableControl;
+                ch2GainCtrlFlag = disableControl;
                 break;
             case "ch2DisableGainControl":
-                ch2HighVoltageLevelFlag = disableControl;
+                ch2GainCtrlFlag = disableControl;
                 break;
             default: {
             }
@@ -129,30 +122,25 @@ public class GraphController extends AppCompatActivity {
     private void setHIVFLabel() {
         hivfLabel1 = (ch1HighVoltageLevelFlag == highVoltage ? "High" : "Low");
         hivfLabel2 = (ch2HighVoltageLevelFlag == highVoltage ? "High" : "Low");
-        Log.i("myTag","ch1HighVoltageLevelFlag :" + ch1HighVoltageLevelFlag);
-        Log.i("myTag","ch2HighVoltageLevelFlag :" + ch2HighVoltageLevelFlag);
-
-        Log.i("myTag","Updated HIVF1 Label:" + hivfLabel1);
-        Log.i("myTag","Updated HIVF2 Label:" + hivfLabel2);
     }
 
     public String getHIVFLabel(int channel) {
         return channel == 1 ? hivfLabel1 : hivfLabel2;
     }
 
-    public void CreateNewChannelData(ArrayList<Entry> EntryList, int channel) {
-        LineDataSet lineDataSet = new LineDataSet(EntryList, "Ch" + String.valueOf(channel));
+    public void createNewChannelData(ArrayList<Entry> EntryList, int ch) {
+        LineDataSet lineDataSet = new LineDataSet(EntryList, "Ch" + ch);
         lineDataSet.setDrawCircles(false);
         lineDataSet.setDrawValues(false);
         lineDataSet.setLineWidth(5);
         lineDataSet.setColor(
-                channel == 1 ? Color.rgb(200, 0, 0) : Color.rgb(0, 0, 200)
+                ch == 1 ? Color.rgb(200, 0, 0) : Color.rgb(0, 0, 200)
         );
 
         dataSets.add(lineDataSet);
     }
 
-    public void ConfigureLineChart() {
+    public void configLineChart() {
         if (graph == null)
             return;
 
@@ -170,7 +158,9 @@ public class GraphController extends AppCompatActivity {
         graph.getAxisRight().setEnabled(false);
         YAxis yAxis = graph.getAxisLeft();
         yAxis.setAxisMinimum(0);
-        yAxis.setAxisMaximum(4096);
+        yAxis.setAxisMaximum(4500);
+        yAxis.setDrawLabels(true);
+
     }
 
     private void configureXAxis() {
@@ -179,30 +169,25 @@ public class GraphController extends AppCompatActivity {
         xAxis.setAxisMaximum(250);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawAxisLine(true);
+        xAxis.setDrawLabels(true);
     }
 
-    public void SetLineChart(LineChart lineChart) {
+    public void setLineChart(LineChart lineChart) {
         if (graph == null)
             graph = lineChart;
     }
 
-    public void DisplayAllChannelsData() {
+    public void displayAllChannelsData() {
         LineData lineData = new LineData(dataSets);
-
         graph.setData(lineData);
-
+        graph.getLegend().setDrawInside(true);
+        graph.getLegend().setYOffset(150);
+        graph.getLegend().setXOffset(225);
         graph.invalidate();
         dataSets = new ArrayList<ILineDataSet>();
     }
-
-    public void SetContext(Context mainActivityContext) {
+    public void setContext(Context mainActivityContext) {
         context = mainActivityContext;
     }
-    public float getGainControlFlag(int channel){
-        if(channel == 1){
-            return (float) (ch1GainCntrlFlag == enableControl ? 1.0 : 2.0);
-        }else{
-            return (float) (ch2GainCntrlFlag == enableControl ? 1.0 : 2.0);
-        }
-    }
+
 }

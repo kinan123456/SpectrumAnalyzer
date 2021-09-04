@@ -5,97 +5,104 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
 
-    tools:context=".Screens.Activities.BluetoothActivity">
-        <TableLayout
+    tools:context=".Screens.Activities.Bluetooth">
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:orientation="horizontal">
+            android:text="     Bluetooth Panel"
+            android:textColor="#000000"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:typeface="monospace" />
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10px"
+        android:background="@drawable/border"
+        android:stretchColumns="0,1">
+
+        <TableRow android:background="@drawable/border">
+
             <TextView
-                android:layout_gravity="center"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:text="     Bluetooth Panel"
+                android:layout_height="match_parent"
+                android:layout_column="0"
+                android:background="@drawable/border"
                 android:textColor="#000000"
-                android:textSize="25sp"
-                android:typeface="monospace"
-                android:textStyle="bold"/>
-        </TableLayout>
-        <TableLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:stretchColumns="0,1"
-            android:layout_margin="10px"
-            android:background="@drawable/border">
-            <TableRow
-                android:background="@drawable/border">
+                android:textStyle="bold"
+                android:typeface="monospace" />
 
-                <TextView
-                    android:background="@drawable/border"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_column="0"
-                    android:textStyle="bold"
-                    android:textColor="#000000"
-                    android:typeface="monospace" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:text="Status"
-                    android:layout_column="1"
-                    android:textStyle="bold"
-                    android:textColor="#000000"
-                    android:typeface="monospace" />
-            </TableRow>
-            <TableRow>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_column="1"
+                android:layout_gravity="center"
+                android:text="Status"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:typeface="monospace" />
+        </TableRow>
 
-                <TextView
-                    android:layout_width="94dp"
-                    android:layout_height="match_parent"
-                    android:layout_column="0"
-                    android:background="@drawable/border"
-                    android:text=" Bluetooth"
-                    android:textColor="#000000"
-                    android:textStyle="bold"
-                    android:typeface="monospace" />
+        <TableRow>
 
-                <TextView
-                    android:id="@+id/bluetooth_status"
-                    android:layout_width="249dp"
-                    android:layout_height="match_parent"
-                    android:layout_column="1"
-                    android:text=""
-                    android:textColor="#000000"
-                    android:textStyle="bold"
-                    android:background="@drawable/border"
-                    android:typeface="monospace" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_column="0"
+                android:background="@drawable/border"
+                android:text=" Bluetooth"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:typeface="monospace" />
 
-            </TableRow>
+            <TextView
+                android:id="@+id/bluetooth_status"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_column="1"
+                android:background="@drawable/border"
+                android:text=""
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:typeface="monospace" />
 
-            <TableRow >
+        </TableRow>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_column="0"
-                    android:text=" Socket"
-                    android:background="@drawable/border"
-                    android:textColor="#000000"
-                    android:textStyle="bold"
-                    android:typeface="monospace" />
-                <TextView
-                    android:id="@+id/socket_status"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text=""
-                    android:layout_column="1"
-                    android:background="@drawable/border"
-                    android:textStyle="bold"
-                    android:textColor="#000000"
-                    android:typeface="monospace" />
-            </TableRow>
-        </TableLayout>
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_column="0"
+                android:background="@drawable/border"
+                android:text=" Socket"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:typeface="monospace" />
+
+            <TextView
+                android:id="@+id/socket_status"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_column="1"
+                android:background="@drawable/border"
+                android:text=""
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:typeface="monospace" />
+        </TableRow>
+    </TableLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -106,45 +113,54 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="  "
-            android:textSize="15sp"
             android:textColor="#000000"
-            android:typeface="monospace"
-            android:textStyle="bold"/>
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:typeface="monospace" />
     </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
         <LinearLayout
-            android:background="@drawable/border"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10px"
+            android:background="@drawable/border"
             android:orientation="horizontal">
 
             <ListView
                 android:id="@+id/devices_list_view"
                 android:layout_width="wrap_content"
-                android:layout_height="440dp"
+                android:layout_height="wrap_content"
                 android:choiceMode="singleChoice" />
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:orientation="horizontal">
-            <Button
-                android:id="@+id/paired_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="List Paired Devices" />
-        </LinearLayout>
+    </ScrollView>
 
-        <LinearLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/paired_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal">
-            <Button
-                android:id="@+id/enableDisableBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Turn Bluetooth On" />
-        </LinearLayout>
+            android:text="List Paired Devices" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/enableDisableBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Turn Bluetooth On" />
+    </LinearLayout>
 </TableLayout>

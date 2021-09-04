@@ -1,25 +1,22 @@
-package com.example.spectrumanalyzer.Controllers.Bluetooth;
+package com.example.spectrumanalyzer.Components.Bluetooth;
 
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.example.spectrumanalyzer.Screens.Activities.BluetoothActivity;
-import com.example.spectrumanalyzer.Screens.Activities.MainActivity;
+import com.example.spectrumanalyzer.Screens.Activities.Bluetooth;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class BluetoothSocketThread extends Thread {
+public class BTSocket extends Thread {
     private final BluetoothSocket mSocket;
     private final InputStream mInStream;
     private final OutputStream mOutStream;
     private final Handler mHandler;
 
-    public BluetoothSocketThread(BluetoothSocket socket, Handler handler) {
+    public BTSocket(BluetoothSocket socket, Handler handler) {
         mSocket = socket;
         mHandler = handler;
         InputStream tmpInStream = null;
@@ -46,7 +43,6 @@ public class BluetoothSocketThread extends Thread {
             offset = 0;
             // Keep looping to listen for received messages
             try {
-                SystemClock.sleep(150);
                     while (offset < buffer_length && delta > 0) {
                         bytes_available = mInStream.available();
                         if (bytes_available > 0) {
@@ -56,7 +52,7 @@ public class BluetoothSocketThread extends Thread {
                             // Send the obtained bytes to the UI Activity via handler
                         }
                     }
-                mHandler.obtainMessage(BluetoothActivity.MESSAGE_READ, data_buffer_max_capacity, -1, buffer).sendToTarget();
+                mHandler.obtainMessage(Bluetooth.MESSAGE_READ, data_buffer_max_capacity, -1, buffer).sendToTarget();
             }catch (IOException ioException) {
                     ioException.printStackTrace();
             }

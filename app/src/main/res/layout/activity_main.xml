@@ -5,76 +5,82 @@
     <RelativeLayout
         android:id="@+id/main_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/main_settings"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <TableLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:stretchColumns="0,1,2,3">
+
                 <TableRow>
-                <TextView
-                    android:id="@+id/graph_y_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="left"
-                    android:text="|Amp.[-]"
-                    android:layout_column="0"
-                    android:textColor="#000000"
-                    android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="|Fs: 0.5 [MHz]"
-                    android:textColor="#000000"
-                    android:layout_column="1"
-                    android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/graph_y_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_column="0"
+                        android:layout_gravity="left"
+                        android:text="|Amp.[-]|"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="|FFT Bins : 128"
-                    android:layout_column="2"
-                    android:textColor="#000000"
-                    android:textStyle="bold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:text="Fs: 0.5 [MHz]"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/freq_res"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="left"
-                    android:text="|dF: 1.9525 [KHz]|"
-                    android:textColor="#000000"
-                    android:layout_column="3"
-                    android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_column="2"
+                        android:text=" |FFT Bins : 128"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/freq_res"
+                        android:layout_height="match_parent"
+                        android:layout_column="3"
+                        android:layout_gravity="left"
+                        android:text="|dF: 1.9525 [KHz]|"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
                 </TableRow>
 
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/activity_main_linechart"
-                    android:layout_width="match_parent"
-                    android:layout_height="325dp" />
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/activity_main_linechart"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"/>
             </TableLayout>
 
             <TableLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:stretchColumns="1"
-                android:layout_margin="10px">
+                android:layout_margin="10px"
+                android:stretchColumns="1">
+
                 <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/graph_x_label"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_column="1"
                         android:gravity="end"
@@ -85,50 +91,54 @@
             </TableLayout>
 
             <TableLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10px"
                 android:stretchColumns="0,1">
+
                 <TableRow
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
                         android:background="@drawable/border"
                         android:text=" System Mode"
                         android:textColor="#000000"
-                        android:layout_column="0"
                         android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/sys_mode"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text=" Idle "
-                        android:background="@drawable/border"
-                        android:textColor="#000000"
+                        android:layout_height="wrap_content"
                         android:layout_column="1"
+                        android:background="@drawable/border"
+                        android:text=" Idle "
+                        android:textColor="#000000"
                         android:textStyle="bold" />
                 </TableRow>
+
                 <TableRow
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
                     <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text=" Socket Status"
-                        android:background="@drawable/border"
+                        android:layout_height="wrap_content"
                         android:layout_column="0"
+                        android:background="@drawable/border"
+                        android:text=" Socket Status"
                         android:textColor="#000000"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/socket_status"
-                        android:layout_width="220dp"
-                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_column="1"
                         android:background="@drawable/border"
                         android:text=" Idle"
@@ -136,125 +146,136 @@
                         android:textStyle="bold" />
                 </TableRow>
             </TableLayout>
+
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:orientation="vertical"
                 android:layout_margin="10px"
                 android:background="@drawable/border"
+                android:orientation="vertical"
                 android:stretchColumns="0,1,2">
+
                 <TableRow
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:orientation="horizontal"
-                    android:background="@drawable/border">
+                    android:background="@drawable/border"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="System Feature "
-                        android:layout_gravity="center"
-                        android:textColor="#000000"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_column="0"
+                        android:layout_gravity="center"
+                        android:text="System Feature "
+                        android:textColor="#000000"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_column="1"
                         android:layout_gravity="center"
                         android:text="Channel 1"
                         android:textColor="#000000"
                         android:textStyle="bold" />
+
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="Channel 2"
-                        android:layout_gravity="center"
-                        android:textColor="#000000"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_column="2"
+                        android:layout_gravity="center"
+                        android:text="Channel 2"
+                        android:textColor="#000000"
                         android:textStyle="bold" />
                 </TableRow>
+
                 <TableRow
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="Input Voltage Level"
-                        android:layout_gravity="center"
-                        android:textColor="#000000"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_column="0"
+                        android:layout_gravity="center"
+                        android:text="Input Voltage State"
+                        android:textColor="#000000"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/hivf_mode1"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text=" Off"
+                        android:layout_column="1"
                         android:layout_gravity="center"
 
+                        android:text=" Off"
                         android:textColor="#000000"
-                        android:layout_column="1"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/hivf_mode2"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text=" Off"
-                        android:layout_gravity="center"
-                        android:textColor="#000000"
                         android:layout_column="2"
+                        android:layout_gravity="center"
+                        android:text=" Off"
+                        android:textColor="#000000"
                         android:textStyle="bold" />
 
                 </TableRow>
+
                 <TableRow
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="Gain Control"
-                        android:textColor="#000000"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_column="0"
-                        android:textStyle="bold"
-                        android:layout_gravity="center" />
+                        android:layout_gravity="center"
+                        android:text="Gain Control State"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/gain_control_mode_1"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text=" Off"
-                        android:layout_gravity="center"
-                        android:textColor="#000000"
                         android:layout_column="1"
-                        android:textStyle="bold"/>
+                        android:layout_gravity="center"
+                        android:text=" Off"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/gain_control_mode_2"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text=" Off"
-                        android:layout_gravity="center"
-                        android:textColor="#000000"
                         android:layout_column="2"
+                        android:layout_gravity="center"
+                        android:text=" Off"
+                        android:textColor="#000000"
                         android:textStyle="bold" />
                 </TableRow>
             </TableLayout>
+
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:stretchColumns="0">
+
                 <TableRow
-                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
                     android:layout_column="0"
-                    android:layout_width="match_parent">
+                    android:layout_alignParentBottom="true"
+                    android:layout_gravity="center">
+
 
                     <Button
                         android:id="@+id/bluetooth_btn"
@@ -264,26 +285,34 @@
                         android:text="Bluetooth Panel" />
                 </TableRow>
             </TableLayout>
+
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:layout_gravity="bottom"
                 android:orientation="horizontal"
                 android:stretchColumns="0,1">
+
                 <TableRow>
+
                     <Button
                         android:id="@+id/voltage_track_btn_1"
-                        android:text="Track Ch1 Level"
-                        android:layout_marginStart="5px"
-                        android:layout_marginEnd="5px"                        android:layout_column="0" />
-                    <Button
-                        android:id="@+id/voltage_track_btn_2"
-                        android:text="Track Ch2 Level"
+                        android:layout_column="0"
                         android:layout_marginStart="5px"
                         android:layout_marginEnd="5px"
-                        android:layout_column="1" />
+                        android:text="Track Ch1 Level" />
+
+                    <Button
+                        android:id="@+id/voltage_track_btn_2"
+                        android:layout_column="1"
+                        android:layout_marginStart="5px"
+                        android:layout_marginEnd="5px"
+                        android:text="Track Ch2 Level" />
                 </TableRow>
+
                 <TableRow>
+
                     <Button
                         android:id="@+id/gain_control_btn_1"
                         android:layout_marginStart="5px"
@@ -294,19 +323,23 @@
                         android:id="@+id/gain_control_btn_2"
                         android:layout_marginStart="5px"
                         android:layout_marginEnd="5px"
-                        android:text="Ctrl Ch2 Gain" />
+                        android:text="Ctrl Ch1 Gain"></Button>
                 </TableRow>
             </TableLayout>
+
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:orientation="horizontal"
                 android:stretchColumns="0,1,2">
+
                 <TableRow>
+
                     <Button
                         android:id="@+id/pause_btn"
-                        android:layout_height="wrap_content"
                         android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_column="0"
                         android:layout_marginStart="5px"
                         android:layout_marginEnd="5px"
@@ -314,16 +347,17 @@
 
                     <Button
                         android:id="@+id/reset_btn"
-                        android:layout_height="wrap_content"
                         android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_column="1"
                         android:layout_marginStart="5px"
                         android:layout_marginEnd="5px"
                         android:text="Reset" />
+
                     <Button
                         android:id="@+id/play_btn"
-                        android:layout_height="wrap_content"
                         android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_column="1"
                         android:layout_marginStart="5px"
                         android:layout_marginEnd="5px"

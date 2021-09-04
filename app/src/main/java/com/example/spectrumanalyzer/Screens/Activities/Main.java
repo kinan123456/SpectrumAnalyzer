@@ -4,24 +4,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.ColorSpace;
 import android.os.Bundle;
 
-import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.spectrumanalyzer.Controllers.Bluetooth.BluetoothController;
-import com.example.spectrumanalyzer.Controllers.Bluetooth.BluetoothSocketThread;
-import com.example.spectrumanalyzer.Controllers.GraphController.GraphController;
+import com.example.spectrumanalyzer.Components.Graph.Controller;
 import com.example.spectrumanalyzer.R;
 
 import com.github.mikephil.charting.charts.LineChart;
-import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class Main extends AppCompatActivity {
 
     // Widgets
     private LineChart lineChart;
@@ -79,20 +74,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void SetupSpectrumChartGraph() {
-        GraphController.GetInstance().SetContext(getApplicationContext());
+        Controller.getInstance().setContext(getApplicationContext());
 
 //        Get reference of line chart data displayed at MainActivity screen.
 //        Send reference to line chart data to GraphController
-        GraphController.GetInstance().SetLineChart(lineChart);
+        Controller.getInstance().setLineChart(lineChart);
 //        Configure line chart like X axis min/max values, title, legends, etc.
-        GraphController.GetInstance().ConfigureLineChart();
-        CustomMarkerView mv = new CustomMarkerView(MainActivity.this, R.layout.custom_marker_view_layout);
+        Controller.getInstance().configLineChart();
+        Marker mv = new Marker(Main.this, R.layout.custom_marker_view_layout);
         mv.setChartView(lineChart);
         lineChart.setMarker(mv);
     }
     private void setPlayBtnOnClickListener() {
         playBtn.setOnClickListener(v -> {
-            if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
+            if (com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().getCurrentBTState() == com.example.spectrumanalyzer.Components.Bluetooth.Controller.btState.CONNECTED) {
                 if(saModeLabel.getText().equals(" Play")){
                     Toast.makeText(getBaseContext(),"System is already Playing!",Toast.LENGTH_SHORT).show();
                 } else{
@@ -100,13 +95,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             else{
-                BluetoothController.GetInstance().toastSystemMessage(getApplicationContext());
+                com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().toastSystemMessage(getApplicationContext());
             }
         });
     }
     private void setPauseBtnOnClickListener() {
         pauseBtn.setOnClickListener(v -> {
-            if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
+            if (com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().getCurrentBTState() == com.example.spectrumanalyzer.Components.Bluetooth.Controller.btState.CONNECTED) {
                 if(saModeLabel.getText().equals(" Pause")){
                     Toast.makeText(getBaseContext(),"System is already Paused!",Toast.LENGTH_SHORT).show();
                 } else{
@@ -118,13 +113,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             else{
-                BluetoothController.GetInstance().toastSystemMessage(getApplicationContext());
+                com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().toastSystemMessage(getApplicationContext());
             }
         });
     }
     private void setResetBtnOnClickListener() {
         resetBtn.setOnClickListener(v -> {
-            if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
+            if (com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().getCurrentBTState() == com.example.spectrumanalyzer.Components.Bluetooth.Controller.btState.CONNECTED) {
                 if(saModeLabel.getText().equals(" Play")){
                     Toast.makeText(getBaseContext(),"System should be Paused first!",Toast.LENGTH_SHORT).show();
                 }else{
@@ -132,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             else{
-                BluetoothController.GetInstance().toastSystemMessage(getApplicationContext());
+                com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().toastSystemMessage(getApplicationContext());
             }
         });
     }
@@ -155,70 +150,70 @@ public class MainActivity extends AppCompatActivity {
     }
     private void setGainControlOnClickListener() {
         gainControlBtn1.setOnClickListener(v -> {
-            if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
+            if (com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().getCurrentBTState() == com.example.spectrumanalyzer.Components.Bluetooth.Controller.btState.CONNECTED) {
                 if(saModeLabel.getText().equals(" Play")){
                     Toast.makeText(getBaseContext(),"System should be Paused First!",Toast.LENGTH_SHORT).show();
                 }else{
-                    if (gainControlBtn1.getText().equals("Enable Gain Control1")) {
-                        gainControlBtn1.setText("Disable Gain Control1");
+                    if (gainControlBtn1.getText().equals("Ctrl Ch1 Gain")) {
+                        gainControlBtn1.setText("Rst Gain Ctrl1");
                         gainControlLabel1.setText("On");
-                        GraphController.GetInstance().updateGainControlAdjustment("ch1EnableGainControl");
+                        Controller.getInstance().updateGainControlAdjustment("ch1EnableGainControl");
                         gainControlLabel1.setTextColor(Color.rgb(0,200,0));
-                        BluetoothController.GetInstance().Write("Enable Gain Control1!");
+                        com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().writeMsg("Enable Gain Control1!");
                     } else {
-                        gainControlBtn1.setText("Enable Gain Control1");
+                        gainControlBtn1.setText("Ctrl Ch1 Gain");
                         gainControlLabel1.setText("Off");
-                        GraphController.GetInstance().updateGainControlAdjustment("ch1DisableGainControl");
+                        Controller.getInstance().updateGainControlAdjustment("ch1DisableGainControl");
                         gainControlLabel1.setTextColor(Color.rgb(200,0,0));
-                        BluetoothController.GetInstance().Write("Disable Gain Control1!");
+                        com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().writeMsg("Disable Gain Control1!");
                     }
                 }
             } else {
-                BluetoothController.GetInstance().toastSystemMessage(getApplicationContext());
+                com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().toastSystemMessage(getApplicationContext());
         }
             });
         gainControlBtn2.setOnClickListener(v -> {
-            if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
+            if (com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().getCurrentBTState() == com.example.spectrumanalyzer.Components.Bluetooth.Controller.btState.CONNECTED) {
                 if(saModeLabel.getText().equals(" Play")){
                     Toast.makeText(getBaseContext(),"System should be Paused First!",Toast.LENGTH_SHORT).show();
                 }else{
-                    if (gainControlBtn2.getText().equals("Enable Gain Control2")) {
-                        gainControlBtn2.setText("Disable Gain Control2");
-                        GraphController.GetInstance().updateGainControlAdjustment("ch2EnableGainControl");
+                    if (gainControlBtn2.getText().equals("Ctrl Ch2 Gain")) {
+                        gainControlBtn2.setText("Rst Gain Ctrl2");
+                        Controller.getInstance().updateGainControlAdjustment("ch2EnableGainControl");
                         gainControlLabel2.setText("On");
                         gainControlLabel2.setTextColor(Color.rgb(0,200,0));
-                        BluetoothController.GetInstance().Write("Enable Gain Control2!");
+                        com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().writeMsg("Enable Gain Control2!");
                     } else {
-                        gainControlBtn2.setText("Enable Gain Control2");
+                        gainControlBtn2.setText("Ctrl Ch2 Gain");
                         gainControlLabel2.setText("Off");
-                        GraphController.GetInstance().updateGainControlAdjustment("ch2DisableGainControl");
+                        Controller.getInstance().updateGainControlAdjustment("ch2DisableGainControl");
                         gainControlLabel2.setTextColor(Color.rgb(200,0,0));
-                        BluetoothController.GetInstance().Write("Disable Gain Control2!");
+                        com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().writeMsg("Disable Gain Control2!");
                     }
                 }
             } else {
-                BluetoothController.GetInstance().toastSystemMessage(getApplicationContext());
+                com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().toastSystemMessage(getApplicationContext());
             }
         });
     }
     private void initSpectrumGraph(){
-        GraphController.GetInstance().DisplayAllChannelsData();
+        Controller.getInstance().resetDataGraph();
+        Controller.getInstance().displayAllChannelsData();
     }
     private void setInputVoltageTrackOnClickListener() {
         trackInputLevelBtn1.setOnClickListener(v -> {
-            if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
+            if (com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().getCurrentBTState() == com.example.spectrumanalyzer.Components.Bluetooth.Controller.btState.CONNECTED) {
                 if (saModeLabel.getText().equals(" Play")) {
                     Toast.makeText(getBaseContext(), "System should be Paused First!", Toast.LENGTH_SHORT).show();
                 } else {
                     if (trackInputLevelBtn1.getText().equals("Trigger Tracker1")) {
                         trackInputLevelBtn1.setText("Track Ch1 Level");
-                        BluetoothController.GetInstance().Write("Trigger Tracker1!");
+                        com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().writeMsg("Trigger Tracker1!");
 
                     } else {
                         trackInputLevelBtn1.setText("Trigger Tracker1");
-                        BluetoothController.GetInstance().Write("Track Level1!");
-                        hivf_ch1 = GraphController.GetInstance().getHIVFLabel(1);
-                        Log.i("myTag","After Tracking Click HIVF_FLAG1: " + hivf_ch1);
+                        com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().writeMsg("Track Ch1!");
+                        hivf_ch1 = Controller.getInstance().getHIVFLabel(1);
                         if (hivf_ch1 == "High") {
                             hivfLabel1.setText(" Exceeded");
                             hivfLabel1.setTextColor(Color.rgb(200, 0, 0));
@@ -230,23 +225,22 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             } else {
-                BluetoothController.GetInstance().toastSystemMessage(getApplicationContext());
+                com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().toastSystemMessage(getApplicationContext());
             }
         });
         trackInputLevelBtn2.setOnClickListener(v -> {
-            if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
+            if (com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().getCurrentBTState() == com.example.spectrumanalyzer.Components.Bluetooth.Controller.btState.CONNECTED) {
                 if (saModeLabel.getText().equals(" Play")) {
                     Toast.makeText(getBaseContext(), "System should be Paused First!", Toast.LENGTH_SHORT).show();
                 }else{
                     if (trackInputLevelBtn2.getText().equals("Trigger Tracker2")) {
                         trackInputLevelBtn2.setText("Track Ch2 Level");
-                        BluetoothController.GetInstance().Write("Trigger Tracker2!");
+                        com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().writeMsg("Trigger Tracker2!");
 
                     } else {
                         trackInputLevelBtn2.setText("Trigger Tracker2");
-                        BluetoothController.GetInstance().Write("Track Level2!");
-                        hivf_ch2 = GraphController.GetInstance().getHIVFLabel(2);
-                        Log.i("myTag","After Tracking Click HIVF_FLAG2: " + hivf_ch2);
+                        com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().writeMsg("Track Ch2!");
+                        hivf_ch2 = Controller.getInstance().getHIVFLabel(2);
                         if (hivf_ch2 == "High") {
                             hivfLabel2.setText(" Exceeded");
                             hivfLabel2.setTextColor(Color.rgb(200, 0, 0));
@@ -257,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }else{
-                    BluetoothController.GetInstance().toastSystemMessage(getApplicationContext());
+                    com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().toastSystemMessage(getApplicationContext());
                 }
         });
     }
@@ -266,8 +260,8 @@ public class MainActivity extends AppCompatActivity {
         saModeLabel.setTextColor(Color.rgb(0,0,0));
     }
     private void initBluetoothSocketStatusLabel(){
-        if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
-            String deviceNameConnectedTo = BluetoothController.GetInstance().GetDeviceNameConnectedTo();
+        if (com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().getCurrentBTState() == com.example.spectrumanalyzer.Components.Bluetooth.Controller.btState.CONNECTED) {
+            String deviceNameConnectedTo = com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().getDeviceNameConnectedTo();
             if (deviceNameConnectedTo.isEmpty()) {
                 btSocketStatusLabel.setText(" Disconnected");
                 btSocketStatusLabel.setTextColor(Color.rgb(200,0,0));
@@ -283,32 +277,32 @@ public class MainActivity extends AppCompatActivity {
     }
     private void setBluetoothOnClickListener() {
         bluetoothBtn.setOnClickListener(v -> {
-            Intent bluetoothIntent = new Intent(MainActivity.this,BluetoothActivity.class);
+            Intent bluetoothIntent = new Intent(Main.this, Bluetooth.class);
             startActivity(bluetoothIntent);
         });
     }
     @Override
     protected void onResume() {
         super.onResume();
-        GraphController.GetInstance().ConfigureLineChart();
+        Controller.getInstance().configLineChart();
         resetMode();
     }
 
     private void pauseMode() {
-            BluetoothController.GetInstance().Write("Pause!");
+            com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().writeMsg("Pause!");
             saModeLabel.setTextColor(Color.rgb(200,0,0));
             saModeLabel.setText(" Pause");
     }
 
     private void playMode() {
-            BluetoothController.GetInstance().Write("Play!");
+            com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().writeMsg("Play!");
             saModeLabel.setTextColor(Color.rgb(0,200,0));
             saModeLabel.setText(" Play");
     }
 
     private void resetMode() {
-        if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.CONNECTED) {
-            BluetoothController.GetInstance().Write("Reset!");
+        if (com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().getCurrentBTState() == com.example.spectrumanalyzer.Components.Bluetooth.Controller.btState.CONNECTED) {
+            com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().writeMsg("Reset!");
         }
         initBluetoothSocketStatusLabel();
         resetHighVoltageTrackFeature();

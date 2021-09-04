@@ -15,7 +15,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -27,19 +26,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.spectrumanalyzer.Controllers.Bluetooth.BluetoothController;
-import com.example.spectrumanalyzer.Controllers.GraphController.GraphController;
+import com.example.spectrumanalyzer.Components.Graph.Controller;
 import com.example.spectrumanalyzer.R;
 import com.github.mikephil.charting.data.Entry;
 
-import java.io.IOError;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class BluetoothActivity extends AppCompatActivity {
+public class Bluetooth extends AppCompatActivity {
 
     // defines for identifying shared types between calling functions
     // REQUEST_ENABLE_BT: used to identify adding bluetooth names
@@ -155,11 +152,11 @@ public class BluetoothActivity extends AppCompatActivity {
             mBluetoothStatus.setText(" Enabled");
             mBluetoothStatus.setTextColor(Color.rgb(0, 200, 0));
             mTurnOnOffBtn.setText("Turn Bluetooth Off");
-            if (BluetoothController.GetInstance().GetCurrentBTState() == BluetoothController.btState.DISCONNECTED) {
+            if (com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().getCurrentBTState() == com.example.spectrumanalyzer.Components.Bluetooth.Controller.btState.DISCONNECTED) {
                 mSocketStatus.setText(" Disconnected");
                 mSocketStatus.setTextColor(Color.rgb(200, 0, 0));
             } else {
-                String deviceNameConnectedTo = BluetoothController.GetInstance().GetDeviceNameConnectedTo();
+                String deviceNameConnectedTo = com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().getDeviceNameConnectedTo();
                 mSocketStatus.setText(" Connected to " + deviceNameConnectedTo.trim());
                 mSocketStatus.setTextColor(Color.rgb(0, 200, 0));
             }
@@ -212,7 +209,7 @@ public class BluetoothActivity extends AppCompatActivity {
                     // Spawn a new thread to avoid blocking the GUI running thread
                     BluetoothDevice device = mBTAdapter.getRemoteDevice(address);
                     try {
-                        BluetoothActivity.this.runOnUiThread(() -> {
+                        Bluetooth.this.runOnUiThread(() -> {
                             mSocketStatus.setText(" Creating...");
                             mSocketStatus.setTextColor(Color.rgb(0, 255, 0));
                         });
@@ -220,61 +217,61 @@ public class BluetoothActivity extends AppCompatActivity {
                     } catch (
                             IOException e) {
                         Log.i("myTag", "failed to create socket");
-                        BluetoothActivity.this.runOnUiThread(() -> {
+                        Bluetooth.this.runOnUiThread(() -> {
                             mSocketStatus.setText(" Creation Failed");
                             mSocketStatus.setTextColor(Color.rgb(200, 0, 0));
                         });
                     }
                     // Establish the Bluetooth socket connection.
-                    mHandler.obtainMessage(BluetoothActivity.CONNECTING_STATUS, -1, -1).sendToTarget();
+                    mHandler.obtainMessage(Bluetooth.CONNECTING_STATUS, -1, -1).sendToTarget();
                     try {
                         Log.i("myTag", "socket connection");
-                        BluetoothActivity.this.runOnUiThread(() -> {
+                        Bluetooth.this.runOnUiThread(() -> {
                             mSocketStatus.setText(" Connecting...");
                             mSocketStatus.setTextColor(Color.rgb(0, 255, 0));
                         });
-                        BluetoothController.GetInstance().SetCurrentBTState(BluetoothController.btState.CONNECTING);
+                        com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().setCurrentBTState(com.example.spectrumanalyzer.Components.Bluetooth.Controller.btState.CONNECTING);
                         mBTSocket.connect();
                     } catch (IOException ioException) {
                         Log.i("myTag", "failed to connect socket");
-                        BluetoothActivity.this.runOnUiThread(() -> {
+                        Bluetooth.this.runOnUiThread(() -> {
                             mSocketStatus.setText(" Disconnecting...");
                             mSocketStatus.setTextColor(Color.rgb(255, 0, 0));
                         });
                         // Set the bluetooth stateMachine to connected
                         try {
                             mBTSocket.close();
-                            BluetoothActivity.this.runOnUiThread(() -> {
+                            Bluetooth.this.runOnUiThread(() -> {
                                 mSocketStatus.setText(" Closed");
                                 mSocketStatus.setTextColor(Color.rgb(200, 0, 0));
-                                BluetoothController.GetInstance().SetDeviceNameConnectedTo("");
+                                com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().setDeviceNameConnectedTo("");
                             });
                             Log.i("myTag", "socket closed connection");
-                            BluetoothController.GetInstance().SetCurrentBTState(BluetoothController.btState.DISCONNECTED);
+                            com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().setCurrentBTState(com.example.spectrumanalyzer.Components.Bluetooth.Controller.btState.DISCONNECTED);
                         } catch (IOException e) {
                             e.printStackTrace();
-                            BluetoothActivity.this.runOnUiThread(() -> {
+                            Bluetooth.this.runOnUiThread(() -> {
                                 mSocketStatus.setText(" Disconnected");
                                 mSocketStatus.setTextColor(Color.rgb(200, 0, 0));
                             });
-                            BluetoothController.GetInstance().SetCurrentBTState(BluetoothController.btState.UNKNOWN);
+                            com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().setCurrentBTState(com.example.spectrumanalyzer.Components.Bluetooth.Controller.btState.UNKNOWN);
                         }
-                        BluetoothActivity.this.runOnUiThread(() -> {
+                        Bluetooth.this.runOnUiThread(() -> {
                             mSocketStatus.setText(" Connection Failed");
                             mSocketStatus.setTextColor(Color.rgb(255, 0, 0));
                         });
                     }
                     if (mBTSocket != null && mBTSocket.isConnected() == true) {
-                        BluetoothController.GetInstance().SetCurrentBTState(BluetoothController.btState.CONNECTED);
+                        com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().setCurrentBTState(com.example.spectrumanalyzer.Components.Bluetooth.Controller.btState.CONNECTED);
                         final String name = info.substring(0, info.length() - 17);
-                        BluetoothController.GetInstance().SetDeviceNameConnectedTo(name);
-                        BluetoothActivity.this.runOnUiThread(() -> {
+                        com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().setDeviceNameConnectedTo(name);
+                        Bluetooth.this.runOnUiThread(() -> {
                             mSocketStatus.setText(" Connected to " + name.trim());
                             mSocketStatus.setTextColor(Color.rgb(0, 200, 0));
                         });
-                        BluetoothController.GetInstance().initBluetoothSocketThread(mBTSocket, mHandler);
+                        com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().initBluetoothSocketThread(mBTSocket, mHandler);
                     } else {
-                        BluetoothActivity.this.runOnUiThread(() -> {
+                        Bluetooth.this.runOnUiThread(() -> {
                             mSocketStatus.setText(" Connection Failed");
                             mSocketStatus.setTextColor(Color.rgb(255, 0, 0));
                         });
@@ -305,12 +302,12 @@ public class BluetoothActivity extends AppCompatActivity {
                         readMessage = new String((byte[]) msg.obj, "UTF-8");
                         Log.i("myTag",readMessage);
                         if (!readMessage.isEmpty()) {
-                                GraphController.GetInstance().updateVoltageLevelTracker(readMessage.trim());
+                                Controller.getInstance().updateVoltageLevelTracker(readMessage.trim());
                                 serverDataMsg = readMessage.split(",");
-                                EntryList = GraphController.GetInstance().ConvertInputArrayToGraphArray(serverDataMsg, ch);
-                                GraphController.GetInstance().CreateNewChannelData(EntryList, ch);
+                                EntryList = Controller.getInstance().convertInputArrayToGraphArray(serverDataMsg, ch);
+                                Controller.getInstance().createNewChannelData(EntryList, ch);
                                 ch = (ch == 1 ? 2 : 1);
-                                if(ch == 2){ GraphController.GetInstance().DisplayAllChannelsData();}
+                                if(ch == 2){ Controller.getInstance().displayAllChannelsData();}
                             }
                         } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
@@ -371,8 +368,8 @@ public class BluetoothActivity extends AppCompatActivity {
         mBluetoothStatus.setTextColor(Color.rgb(200, 0, 0));
         mSocketStatus.setText(" Idle");
         mSocketStatus.setTextColor(Color.rgb(0, 0, 0));
-        BluetoothController.GetInstance().SetDeviceNameConnectedTo("");
-        BluetoothController.GetInstance().SetCurrentBTState(BluetoothController.btState.DISCONNECTED);
+        com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().setDeviceNameConnectedTo("");
+        com.example.spectrumanalyzer.Components.Bluetooth.Controller.getInstance().setCurrentBTState(com.example.spectrumanalyzer.Components.Bluetooth.Controller.btState.DISCONNECTED);
         unlistPairedDevices();
     }
 
@@ -381,12 +378,12 @@ public class BluetoothActivity extends AppCompatActivity {
         try {
             final Method m = device.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
             tmp = (BluetoothSocket) m.invoke(device, 1);
-            BluetoothActivity.this.runOnUiThread(() -> {
+            Bluetooth.this.runOnUiThread(() -> {
                 mSocketStatus.setText(" Creating RFCOMM. Socket");
                 mSocketStatus.setTextColor(Color.rgb(0, 255, 0));
             });
         } catch (Exception e) {
-            BluetoothActivity.this.runOnUiThread(() -> {
+            Bluetooth.this.runOnUiThread(() -> {
                 mSocketStatus.setText(" Connection Failed");
                 mSocketStatus.setTextColor(Color.rgb(255, 0, 0));
             });
